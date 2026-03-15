@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Anonymous Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="join">
+
+        <h2>Join Chat</h2>
+
+        <input id="name" placeholder="Enter your name">
+
+        <button onclick="join()">Join</button>
+
+    </div>
+
+    <script>
+
+        function join() {
+
+            const name = document.getElementById("name").value
+
+            localStorage.setItem("name", name)
+
+            window.location = "chat.html"
+
+        }
+
+    </script>
+
+</body>
+
+</html>
