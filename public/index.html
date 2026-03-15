@@ -1,37 +1,92 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Anonymous Chat</title>
-    <link rel="stylesheet" href="index.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0b0b0d" />
+  <title>AnonChat — Ephemeral · Private · Free</title>
+  <link rel="stylesheet" href="index.css" />
 </head>
+<body>
 
-<body class="dark">
+  <div class="noise"></div>
 
-    <div class="center">
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark">💬</div>
+      <span class="logo-name">AnonChat</span>
+    </div>
+    <div class="top-pill">No account needed</div>
+  </header>
 
-        <h1>Anonymous Chat</h1>
+  <main class="stage">
 
-        <input id="name" placeholder="Enter name">
+    <div class="glow glow-a"></div>
+    <div class="glow glow-b"></div>
 
-        <button onclick="join()">Join Chat</button>
+    <div class="card" id="card">
+      <div class="card-top">
+        <div class="avatar-ring">
+          <span class="avatar-icon">💬</span>
+        </div>
+        <h1 class="headline">AnonChat</h1>
+        <p class="sub">Say whatever. Disappears in 30 min.</p>
 
+        <div class="pills">
+          <span class="pill green"><span class="dot"></span>Live Now</span>
+          <span class="pill amber">⏱ 30-min vanish</span>
+          <span class="pill muted">👤 Anonymous</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <label class="field-label" for="name">Display name</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="Enter any name…"
+          autocomplete="off"
+          spellcheck="false"
+          maxlength="32"
+        />
+        <button class="join-btn" id="joinBtn" onclick="join()">
+          <span class="btn-text">Join Chat</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="fine-print">No email · No password · Messages auto-delete after 30 minutes</p>
+      </div>
     </div>
 
-    <script>
+  </main>
 
-        function join() {
+  <script>
+    const input = document.getElementById('name');
+    const btn   = document.getElementById('joinBtn');
 
-            const name = document.getElementById("name").value
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') join();
+    });
 
-            localStorage.setItem("name", name)
+    input.addEventListener('input', () => {
+      btn.classList.toggle('ready', input.value.trim().length > 0);
+    });
 
-            window.location = "chat.html"
-
-        }
-
-    </script>
-
+    function join() {
+      const name = input.value.trim();
+      if (!name) {
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 500);
+        input.focus();
+        return;
+      }
+      localStorage.setItem('name', name);
+      btn.classList.add('loading');
+      btn.querySelector('.btn-text').textContent = 'Joining…';
+      setTimeout(() => { window.location.href = 'chat.html'; }, 400);
+    }
+  </script>
 </body>
-
 </html>

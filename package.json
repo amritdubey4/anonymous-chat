@@ -1,7 +1,7 @@
 {
   "name": "anonymous-chat",
   "version": "1.0.0",
-  "description": "Anonymous chat system",
+  "description": "Anonymous ephemeral chat",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

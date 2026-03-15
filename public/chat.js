@@ -1,77 +1,173 @@
-const socket = io();
+// ── iOS keyboard: visualViewport keeps composer above keyboard ─
+// When the soft keyboard opens on iOS/Android, visualViewport shrinks.
+// We pin .chat-app to exactly the visible area so the composer doesn't hide.
+if (window.visualViewport) {
+  const applyViewport = () => {
+    const vv = window.visualViewport;
+    const app = document.querySelector('.chat-app');
+    if (!app) return;
+    app.style.position = 'fixed';
+    app.style.top      = vv.offsetTop + 'px';
+    app.style.left     = vv.offsetLeft + 'px';
+    app.style.width    = vv.width + 'px';
+    app.style.height   = vv.height + 'px';
+  };
+  window.visualViewport.addEventListener('resize', applyViewport);
+  window.visualViewport.addEventListener('scroll', applyViewport);
+}
 
+// ── Init ──────────────────────────────────────────────────────
 const name = localStorage.getItem('name');
 
-const messages = document.getElementById('messages');
-const users = document.getElementById('users');
-const userCount = document.getElementById('userCount');
+// Redirect if no name set
+if (!name) {
+  window.location.href = 'index.html';
+}
 
+const socket = io();
+
+// ── DOM refs ──────────────────────────────────────────────────
+const messagesEl   = document.getElementById('messages');
+const messagesPane = document.getElementById('messagesPane');
+const userCountEl  = document.getElementById('userCount');
+const chatNameEl   = document.getElementById('chatName');
+const msgInput     = document.getElementById('msg');
+const timerEl      = document.getElementById('timer');
+
+chatNameEl.textContent = name;
+
+// ── Join ──────────────────────────────────────────────────────
 socket.emit('join', name);
 
+// ── Load history ──────────────────────────────────────────────
 socket.on('load_messages', (msgs) => {
-	messages.innerHTML = '';
-	msgs.forEach(add);
+  messagesEl.innerHTML = '';
+  if (msgs.length === 0) {
+    showEmptyState();
+  } else {
+    msgs.forEach(renderMessage);
+    scrollToBottom(false);
+  }
 });
 
+// ── New message ───────────────────────────────────────────────
 socket.on('chat_message', (msg) => {
-	add(msg);
+  removeEmptyState();
+  renderMessage(msg);
+  scrollToBottom(true);
 });
 
+// ── Refresh after purge ───────────────────────────────────────
 socket.on('refresh_messages', (msgs) => {
-	messages.innerHTML = '';
-	msgs.forEach(add);
+  messagesEl.innerHTML = '';
+  if (msgs.length === 0) {
+    showEmptyState();
+  } else {
+    msgs.forEach(renderMessage);
+    scrollToBottom(false);
+  }
 });
 
+// ── User list ─────────────────────────────────────────────────
 socket.on('user_list', (list) => {
-	users.innerHTML = '';
-
-	list.forEach((u) => {
-		const li = document.createElement('li');
-
-		li.innerText = u;
-
-		users.appendChild(li);
-	});
-
-	userCount.innerText = 'Online: ' + list.length;
+  userCountEl.textContent = `${list.length} online`;
 });
 
-function add(msg) {
-	const div = document.createElement('div');
+// ── Render a message ──────────────────────────────────────────
+function renderMessage(msg) {
+  const isSelf = msg.name === name;
 
-	div.className = 'message';
+  const group = document.createElement('div');
+  group.className = 'msg-group ' + (isSelf ? 'self' : 'other');
 
-	div.innerHTML = '<b>' + msg.name + '</b>: ' + msg.text;
+  if (!isSelf) {
+    const nameEl = document.createElement('div');
+    nameEl.className = 'msg-name';
+    nameEl.textContent = msg.name;
+    group.appendChild(nameEl);
+  }
 
-	messages.appendChild(div);
+  const bubble = document.createElement('div');
+  bubble.className = 'message ' + (isSelf ? 'self' : 'other');
+  bubble.textContent = msg.text;
+  group.appendChild(bubble);
+
+  const timeEl = document.createElement('div');
+  timeEl.className = 'msg-time';
+  timeEl.textContent = formatTime(msg.time);
+  group.appendChild(timeEl);
+
+  messagesEl.appendChild(group);
 }
 
+// ── Empty state ───────────────────────────────────────────────
+function showEmptyState() {
+  if (document.querySelector('.empty-state')) return;
+  const el = document.createElement('div');
+  el.className = 'empty-state';
+  el.innerHTML = '<div class="big">💬</div><div>No messages yet.</div><div>Say something to start the conversation.</div>';
+  messagesEl.appendChild(el);
+}
+
+function removeEmptyState() {
+  const el = document.querySelector('.empty-state');
+  if (el) el.remove();
+}
+
+// ── Send ──────────────────────────────────────────────────────
 function send() {
-	const text = document.getElementById('msg').value;
+  const text = msgInput.value.trim();
+  if (!text) return;
 
-	socket.emit('chat_message', {
-		name: name,
-		text: text,
-	});
+  socket.emit('chat_message', { name, text });
 
-	document.getElementById('msg').value = '';
+  msgInput.value = '';
+  // Reset height after clearing
+  msgInput.style.height = 'auto';
+  msgInput.focus();
 }
 
-function toggleTheme() {
-	document.body.classList.toggle('dark');
+// ── Leave ─────────────────────────────────────────────────────
+function leave() {
+  localStorage.removeItem('name');
+  window.location.href = 'index.html';
 }
 
-setInterval(() => {
-	const now = Date.now();
+// ── Scroll ────────────────────────────────────────────────────
+function scrollToBottom(smooth) {
+  messagesPane.scrollTo({
+    top: messagesPane.scrollHeight,
+    behavior: smooth ? 'smooth' : 'instant'
+  });
+}
 
-	const expire = 30 * 60 * 1000;
+// ── Time format ───────────────────────────────────────────────
+function formatTime(ts) {
+  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
-	let remaining = expire - (now % expire);
+// ── Keyboard: Enter sends, Shift+Enter newline ────────────────
+msgInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
 
-	let minutes = Math.floor(remaining / 60000);
+// ── Auto-resize textarea ──────────────────────────────────────
+msgInput.addEventListener('input', () => {
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 110) + 'px';
+});
 
-	let seconds = Math.floor((remaining % 60000) / 1000);
+// ── Expire timer ──────────────────────────────────────────────
+function updateTimer() {
+  const THIRTY_MIN = 30 * 60 * 1000;
+  const remaining  = THIRTY_MIN - (Date.now() % THIRTY_MIN);
+  const m = Math.floor(remaining / 60000);
+  const s = Math.floor((remaining % 60000) / 1000);
+  timerEl.textContent = `⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
 
-	document.getElementById('timer').innerText =
-		'Messages reset in ' + minutes + ':' + seconds;
-}, 1000);
+updateTimer();
+setInterval(updateTimer, 1000);

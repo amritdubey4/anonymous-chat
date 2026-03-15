@@ -1,52 +1,71 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Chat</title>
-    <link rel="stylesheet" href="chat.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0b0b0d" />
+  <title>AnonChat</title>
+  <link rel="stylesheet" href="chat.css" />
 </head>
+<body>
 
-<body class="dark">
+  <div class="noise"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
 
-    <div class="app">
+  <div class="chat-app">
 
-        <div class="sidebar">
-
-            <h2>Users</h2>
-
-            <div id="userCount"></div>
-
-            <ul id="users"></ul>
-
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="top-left">
+        <div class="logo-mark">💬</div>
+        <div class="top-meta">
+          <span class="app-name">AnonChat</span>
+          <span class="channel-tag">#general</span>
         </div>
+      </div>
 
-        <div class="chat">
-
-            <div class="topbar">
-
-                <button onclick="toggleTheme()">🌙</button>
-
-                <div id="timer"></div>
-
-            </div>
-
-            <div id="messages"></div>
-
-            <div class="input">
-
-                <input id="msg">
-
-                <button onclick="send()">Send</button>
-
-            </div>
-
+      <div class="top-right">
+        <div class="status-badge">
+          <span class="dot"></span>
+          <span id="userCount">— online</span>
         </div>
+        <div class="expire-badge" id="timer">⏱ 30:00</div>
+        <button class="icon-btn" title="Leave" onclick="leave()">✕</button>
+      </div>
+    </header>
 
-    </div>
+    <!-- Messages -->
+    <main class="messages-pane" id="messagesPane">
+      <div class="messages-inner" id="messages"></div>
+    </main>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="chat.js"></script>
+    <!-- Composer -->
+    <footer class="composer">
+      <div class="composer-who">Chatting as <strong id="chatName"></strong></div>
+      <div class="composer-row">
+        <textarea
+          id="msg"
+          placeholder="Message…"
+          rows="1"
+          maxlength="2000"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="send()" title="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <div class="composer-hint">Enter to send · Shift+Enter for new line · Messages vanish after 30 min</div>
+    </footer>
 
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="chat.js"></script>
 </body>
-
 </html>

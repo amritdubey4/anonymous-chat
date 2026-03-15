@@ -17,17 +17,18 @@ io.on('connection', (socket) => {
 		io.emit('user_list', Object.values(users));
 	});
 
+	// Send existing (non-expired) messages on connect
 	socket.emit('load_messages', messages);
 
 	socket.on('chat_message', (data) => {
 		const message = {
+			id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
 			name: data.name,
 			text: data.text,
 			time: Date.now(),
 		};
 
 		messages.push(message);
-
 		io.emit('chat_message', message);
 	});
 
@@ -37,16 +38,18 @@ io.on('connection', (socket) => {
 	});
 });
 
+// Purge messages older than 30 min every 10s
 setInterval(() => {
-	const now = Date.now();
+	const cutoff = Date.now() - 30 * 60 * 1000;
+	const before = messages.length;
+	messages = messages.filter((msg) => msg.time >= cutoff);
 
-	messages = messages.filter((msg) => now - msg.time < 30 * 60 * 1000);
-
-	io.emit('refresh_messages', messages);
+	if (messages.length !== before) {
+		io.emit('refresh_messages', messages);
+	}
 }, 10000);
 
 const PORT = process.env.PORT || 3000;
-
 server.listen(PORT, () => {
-	console.log('Server running');
+	console.log(`Server running on http://localhost:${PORT}`);
 });
