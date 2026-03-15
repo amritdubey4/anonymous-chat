@@ -1,0 +1,119 @@
+/* Index Page Styles - Dark Glassmorphism */
+body {
+    font-family: 'SF Pro Display', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    color: #ecf0f1;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.center h1 {
+    font-size: 3.5em;
+    margin-bottom: 30px;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    animation: bounceIn 1s ease-out;
+    font-weight: 300;
+}
+
+.center input {
+    padding: 18px;
+    font-size: 1.3em;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    margin-bottom: 25px;
+    width: 350px;
+    max-width: 80%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.center input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
+}
+
+.center button {
+    padding: 18px 35px;
+    font-size: 1.3em;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.center button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.center button:active {
+    transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .center h1 {
+        font-size: 2.5em;
+    }
+
+    .center input,
+    .center button {
+        width: 90%;
+        font-size: 1.1em;
+    }
+}

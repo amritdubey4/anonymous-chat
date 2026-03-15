@@ -1,18 +1,180 @@
+/* General Styles */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
+    padding: 0;
+    transition: background 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
 }
 
+/* Light Theme */
+body.light {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: #333;
+}
+
+body.light .sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.light .sidebar li {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light .chat {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+body.light .topbar {
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light #messages {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+}
+
+body.light .message.self {
+    background: #0984e3;
+    color: white;
+}
+
+body.light .message.other {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+body.light .input {
+    background: rgba(255, 255, 255, 0.8);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light .input input {
+    background: white;
+    color: #333;
+}
+
+/* Dark Theme */
+body.dark {
+    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+    color: #ecf0f1;
+}
+
+body.dark .sidebar {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark .sidebar li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark .chat {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark .topbar {
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark #messages {
+    background: rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+body.dark .message.self {
+    background: #0984e3;
+    color: white;
+}
+
+body.dark .message.other {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+body.dark .input {
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark .input input {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Index Page Styles */
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 20px;
+}
+
+.center h1 {
+    font-size: 3em;
+    margin-bottom: 30px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 1s ease-in;
+}
+
+.center input {
+    padding: 15px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    width: 300px;
+    max-width: 80%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+}
+
+.center input:focus {
+    outline: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.center button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.center button:hover {
+    background: #229954;
+    transform: translateY(-2px);
+}
+
+/* Chat Page Styles */
 .app {
     display: flex;
     height: 100vh;
 }
 
 .sidebar {
-    width: 220px;
-    background: #2b2d31;
-    color: white;
+    width: 250px;
     padding: 20px;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 1.5em;
 }
 
 .sidebar ul {
@@ -21,7 +183,13 @@ body {
 }
 
 .sidebar li {
-    padding: 6px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s;
+}
+
+.sidebar li:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .chat {
@@ -31,58 +199,129 @@ body {
 }
 
 .topbar {
-    height: 50px;
+    height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    padding: 0 20px;
+}
+
+.topbar button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: inherit;
+    transition: transform 0.2s;
+}
+
+.topbar button:hover {
+    transform: scale(1.1);
 }
 
 #messages {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto;
     padding: 20px;
-    background: #313338;
-    color: white;
+    display: flex;
+    flex-direction: column;
 }
 
 .message {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 15px;
+    padding: 12px 18px;
+    border-radius: 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+    animation: slideIn 0.3s ease-out;
+}
+
+.message.self {
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.message.other {
+    align-self: flex-start;
 }
 
 .input {
     display: flex;
-    padding: 10px;
-    background: #383a40;
+    padding: 20px;
 }
 
 .input input {
     flex: 1;
-    padding: 10px;
+    padding: 15px;
     border: none;
-    border-radius: 6px;
+    border-radius: 25px;
+    margin-right: 10px;
+    font-size: 1em;
+    transition: box-shadow 0.3s;
+}
+
+.input input:focus {
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .input button {
-    margin-left: 10px;
-    padding: 10px 16px;
+    padding: 15px 25px;
     border: none;
-    border-radius: 6px;
-    background: #5865f2;
+    border-radius: 25px;
+    background: #27ae60;
     color: white;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
 }
 
-.light {
-    background: white;
-    color: black;
+.input button:hover {
+    background: #229954;
+    transform: translateY(-2px);
 }
 
-.dark {
-    background: #1e1f22;
-    color: white;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 150px;
+    }
+
+    .center h1 {
+        font-size: 2em;
+    }
+
+    .center input,
+    .center button {
+        width: 90%;
+    }
 }
