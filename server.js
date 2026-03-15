@@ -9,8 +9,14 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 let messages = [];
+let users = {};
 
 io.on('connection', (socket) => {
+	socket.on('join', (name) => {
+		users[socket.id] = name;
+		io.emit('user_list', Object.values(users));
+	});
+
 	socket.emit('load_messages', messages);
 
 	socket.on('chat_message', (data) => {
@@ -24,6 +30,11 @@ io.on('connection', (socket) => {
 
 		io.emit('chat_message', message);
 	});
+
+	socket.on('disconnect', () => {
+		delete users[socket.id];
+		io.emit('user_list', Object.values(users));
+	});
 });
 
 setInterval(() => {
@@ -32,7 +43,7 @@ setInterval(() => {
 	messages = messages.filter((msg) => now - msg.time < 30 * 60 * 1000);
 
 	io.emit('refresh_messages', messages);
-}, 60000);
+}, 10000);
 
 const PORT = process.env.PORT || 3000;
 
